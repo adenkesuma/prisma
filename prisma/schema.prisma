@@ -13,13 +13,14 @@ datasource db {
 model User {
   id             String          @id @default(uuid())
   name           String
-  role Role @default(BASIC)
+  role           Role            @default(BASIC)
   age            Int
   email          String          @unique
   isAdmin        Boolean
   writtenPosts   Posts[]         @relation("WrittenPosts")
   favouritePosts Posts[]         @relation("FavouritePosts")
-  userPreference UserPreference?
+  userPreference UserPreference? @relation(fields: [userPreferenceId], references: [id])
+  userPreferenceId String? @unique
 
   // kode di bawah berarti bahwa name dan age harus unik dan tidak boleh sama untuk keduanya
   @@unique([age, name])
@@ -30,8 +31,7 @@ model User {
 model UserPreference {
   id           String  @id @default(uuid())
   emailUpdates Boolean
-  user         User    @relation(fields: [userId], references: [id])
-  userId       String  @unique
+  user User?
 }
 
 model Posts {
@@ -55,6 +55,6 @@ model Category {
 
 // enum 
 enum Role {
-  BASIC 
+  BASIC
   ADMIN
-} 
+}
